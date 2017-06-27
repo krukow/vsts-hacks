@@ -1,23 +1,23 @@
 {
-  "name": "chromex-sample",
-  "version": "0.1.0",
+  "name": "MSMobileCenter VSTS Hacks",
+  "version": "0.2.0",
   "browser_action": {
-    "default_title": "Show the popup",
+    "default_title": "Hack It!",
     "default_popup": "popup.html",
     "default_icon": {
-      "19": "images/icon19.png",
-      "38": "images/icon38.png"
+      "19": "images/mobile-center-logo19.png",
+      "38": "images/mobile-center-logo38.png"
     }
   },
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
+    "16": "images/mobile-center-logo16.png",
+    "48": "images/mobile-center-logo48.png",
+    "128": "images/mobile-center-logo128.png"
   },
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "https://msmobilecenter.visualstudio.com/*"
       ],
       "js": [
         "compiled/content-script.js"
@@ -27,10 +27,12 @@
   ],
   "background": {
     "page": "background.html",
-    "persistent": false
+    "persistent": true
   },
   "permissions": [
-    "storage"
+      "webRequest",
+      "*://msmobilecenter.visualstudio.com/",
+      "storage"
   ],
   "manifest_version": 2
 }

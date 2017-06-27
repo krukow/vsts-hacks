@@ -1,2 +1,3 @@
 goog.require("devtools.preload");
-goog.require("chromex_sample.background");
+goog.require("vsts_hacks.background");
+goog.require("figwheel.connect.build_background");

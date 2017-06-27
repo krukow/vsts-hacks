@@ -1,17 +1,24 @@
-(defproject binaryage/chromex-sample "0.1.0-SNAPSHOT"
+(defproject krukow/vsts-hacks "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
-                 [org.clojure/clojurescript "1.9.562"]
+                 [org.clojure/clojurescript "1.9.660"]
                  [org.clojure/core.async "0.3.443"]
                  [binaryage/chromex "0.5.8"]
                  [binaryage/devtools "0.9.4"]
+                 [cljs-ajax "0.6.0"]
                  [figwheel "0.5.10"]
-                 [environ "1.1.0"]]
+                 [environ "1.1.0"]
+                 [cljsjs/react "15.4.2-2"]
+                 [cljsjs/react-dom "15.4.2-2"]
+                 [sablono "0.8.0"]
+                 [org.omcljs/om "1.0.0-alpha34"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-figwheel "0.5.10"]
             [lein-shell "0.5.0"]
             [lein-environ "1.1.0"]
-            [lein-cooper "1.2.2"]]
+            [lein-cooper "1.2.2"]
+            [refactor-nrepl "2.3.1"]
+            [cider/cider-nrepl "0.14.0"]]
 
   :source-paths ["src/background"
                  "src/popup"
@@ -24,7 +31,10 @@
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
   :profiles {:unpacked
-             {:cljsbuild {:builds
+             {:dependencies [[figwheel-sidecar "0.5.8"]
+                             [com.cemerick/piggieback "0.2.2"]]
+
+              :cljsbuild {:builds
                           {:background
                            {:source-paths ["src/background"]
                             :figwheel     true
@@ -32,7 +42,7 @@
                                            :output-dir    "resources/unpacked/compiled/background"
                                            :asset-path    "compiled/background"
                                            :preloads      [devtools.preload]
-                                           :main          chromex-sample.background
+                                           :main          vsts-hacks.background
                                            :optimizations :none
                                            :source-map    true}}
                            :popup
@@ -42,7 +52,7 @@
                                            :output-dir    "resources/unpacked/compiled/popup"
                                            :asset-path    "compiled/popup"
                                            :preloads      [devtools.preload]
-                                           :main          chromex-sample.popup
+                                           :main          vsts-hacks.popup
                                            :optimizations :none
                                            :source-map    true}}}}}
              :unpacked-content-script
@@ -52,7 +62,7 @@
                             :compiler     {:output-to     "resources/unpacked/compiled/content-script/main.js"
                                            :output-dir    "resources/unpacked/compiled/content-script"
                                            :asset-path    "compiled/content-script"
-                                           :main          chromex-sample.content-script
+                                           :main          vsts-hacks.content-script
                                            ;:optimizations :whitespace                                                        ; content scripts cannot do eval / load script dynamically
                                            :optimizations :advanced                                                           ; let's use advanced build with pseudo-names for now, there seems to be a bug in deps ordering under :whitespace mode
                                            :pseudo-names  true
@@ -76,7 +86,11 @@
              :figwheel
              {:figwheel {:server-port    6888
                          :server-logfile ".figwheel.log"
-                         :repl           false}}
+                         :nrepl-port 7888
+                         :nrepl-middleware ["cider.nrepl/cider-middleware"
+                                            "refactor-nrepl.middleware/wrap-refactor"
+                                            "cemerick.piggieback/wrap-cljs-repl"]
+                         :repl           true}}
 
              :cooper
              {:cooper {"content-dev" ["lein" "content-dev"]
@@ -91,24 +105,32 @@
                             :compiler     {:output-to     "resources/release/compiled/background.js"
                                            :output-dir    "resources/release/compiled/background"
                                            :asset-path    "compiled/background"
-                                           :main          chromex-sample.background
-                                           :optimizations :advanced
+                                           :main          vsts-hacks.background
+                                           ;:optimizations :advanced
+                                           :optimizations :simple
+                                           :pseudo-names  true
+                                           :source-map    "resources/release/compiled/background.js.map"
                                            :elide-asserts true}}
                            :popup
                            {:source-paths ["src/popup"]
                             :compiler     {:output-to     "resources/release/compiled/popup.js"
                                            :output-dir    "resources/release/compiled/popup"
                                            :asset-path    "compiled/popup"
-                                           :main          chromex-sample.popup
-                                           :optimizations :advanced
+                                           :main          vsts-hacks.popup
+                                        ;:optimizations :advanced
+                                           :optimizations :simple
+                                           :pseudo-names  true
                                            :elide-asserts true}}
                            :content-script
                            {:source-paths ["src/content_script"]
                             :compiler     {:output-to     "resources/release/compiled/content-script.js"
                                            :output-dir    "resources/release/compiled/content-script"
                                            :asset-path    "compiled/content-script"
-                                           :main          chromex-sample.content-script
-                                           :optimizations :advanced
+                                           :main          vsts-hacks.content-script
+                                        ;:optimizations :advanced
+                                           :optimizations :simple
+                                           :source-map    "resources/release/compiled/content-script.js.map"
+                                           :pseudo-names  true
                                            :elide-asserts true}}}}}}
 
   :aliases {"dev-build"   ["with-profile" "+unpacked,+unpacked-content-script,+checkouts,+checkouts-content-script" "cljsbuild" "once"]

@@ -1,12 +1,8 @@
-/* this manifest is for development only
-   we include all files individually
-   also we allow unsafe eval for figwheel
-*/
 {
-  "name": "chromex-sample-dev",
-  "version": "0.1.0",
+  "name": "vsts-hacks-dev",
+  "version": "0.2.0",
   "browser_action": {
-    "default_title": "Show the popup",
+    "default_title": "Hack It!",
     "default_popup": "popup.html",
     "default_icon": {
       "19": "images/icon19.png",
@@ -22,7 +18,7 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "https://msmobilecenter.visualstudio.com/*"
       ],
       "js": [
         "compiled/content-script/main.js"
@@ -32,10 +28,12 @@
   ],
   "background": {
     "page": "background.html",
-    "persistent": false
+    "persistent": true
   },
   "permissions": [
-    "storage"
+      "webRequest",
+      "*://msmobilecenter.visualstudio.com/",
+      "storage"
   ],
   "manifest_version": 2
 }

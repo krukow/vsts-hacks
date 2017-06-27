@@ -1,2 +1,3 @@
 goog.require("devtools.preload");
-goog.require("chromex_sample.popup");
+goog.require("vsts_hacks.popup");
+goog.require("figwheel.connect.build_popup");
