@@ -1,6 +1,6 @@
 {
   "name": "vsts-hacks-dev",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "browser_action": {
     "default_title": "Hack It!",
     "default_popup": "popup.html",
