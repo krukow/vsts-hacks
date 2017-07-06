@@ -41,7 +41,7 @@
                                    (fn [item-ids]
                                      (let [new-work-item (:data message-payload)
                                            item-ids (remove #{new-work-item} item-ids)]
-                                       (conj item-ids new-work-item)))))))
+                                       (cons new-work-item item-ids)))))))
       (recur))
     (remove-client! client)))
 
@@ -83,7 +83,7 @@
            new-items (:recent-viewed-item-ids new-value)
            new-items-count (count new-items)]
        (when (> new-items-count 10) ; max 10 viewed items
-         (swap! state assoc :recent-viewed-item-ids (subvec new-items 0 10)))
+         (swap! state assoc :recent-viewed-item-ids (take 10 new-items)))
        (when-not (= new-items old-items)
          (load-recent-viewed-work-items!))))))
 
