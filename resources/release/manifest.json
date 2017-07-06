@@ -1,6 +1,6 @@
 {
   "name": "MSMobileCenter VSTS Hacks",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "browser_action": {
     "default_title": "Hack It!",
     "default_popup": "popup.html",
