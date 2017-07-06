@@ -83,7 +83,7 @@
            new-items (:recent-viewed-item-ids new-value)
            new-items-count (count new-items)]
        (when (> new-items-count 10) ; max 10 viewed items
-         (swap! state assoc :recent-viewed-item-ids (subvec new-items 1 11)))
+         (swap! state assoc :recent-viewed-item-ids (subvec new-items 0 10)))
        (when-not (= new-items old-items)
          (load-recent-viewed-work-items!))))))
 

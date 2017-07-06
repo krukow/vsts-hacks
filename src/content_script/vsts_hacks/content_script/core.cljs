@@ -61,7 +61,6 @@
     (go-loop [elements (<! (wait-for-work-item-pop-up!))]
       (let [id-element (first (filter parser elements)) ]
         (when id-element
-          (log "Found")
           (post-message! background-port (clj->js
                                           {:action "view-work-item"
                                            :data

@@ -20,6 +20,7 @@
       {:value value}
       {:value :not-found})))
 
+;;Not used via David Nolen's sample of om.next
 (defn mutate [{:keys [state] :as env} key params]
   (if (= 'increment key)
     {:value {:keys [:count]}
