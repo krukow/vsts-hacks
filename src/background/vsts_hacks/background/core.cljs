@@ -58,10 +58,11 @@
 
 (defn load-recent-viewed-work-items! []
   (go
-    (let [recent (<! (api/get-work-items (map :id (:recent-viewed-item-ids @state))))]
-      (swap! state assoc :recent-viewed-items recent)
-      (doseq [client @clients]
-        (post-message! client (clj->js @state))))))
+    (when-let [recent-items (:recent-viewed-item-ids @state)]
+      (let [recent (<! (api/get-work-items (map :id recent-items)))]
+        (swap! state assoc :recent-viewed-items recent)
+        (doseq [client @clients]
+          (post-message! client (clj->js @state)))))))
 
 (defn add-user-watcher! []
   (add-watch
