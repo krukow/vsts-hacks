@@ -52,10 +52,11 @@
   (render
    [this]
    (let [{:keys [recent-items]} (om/props this)]
-     (if (empty? recent-items)
+     (if (or (= :not-found recent-items)
+             (empty? recent-items))
        (dom/div nil
                 (dom/h1 nil "Welcome")
-                (dom/p nil "Open/Refresh MS Mobile Center to see recent items..."))
+                (dom/p nil "Did not find recently any created items! Try to open/refresh the browser if you're expecting some."))
        (dom/div
         nil
         (dom/h1

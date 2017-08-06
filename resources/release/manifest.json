@@ -1,9 +1,10 @@
 {
   "name": "MSMobileCenter VSTS Hacks",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "browser_action": {
     "default_title": "Hack It!",
     "default_popup": "popup.html",
+    "browser_style": true,
     "default_icon": {
       "19": "images/mobile-center-logo19.png",
       "38": "images/mobile-center-logo38.png"
@@ -13,6 +14,11 @@
     "16": "images/mobile-center-logo16.png",
     "48": "images/mobile-center-logo48.png",
     "128": "images/mobile-center-logo128.png"
+  },
+  "applications": {
+    "gecko": {
+      "id": "karl.krukow@gmail.com"
+    }
   },
   "content_scripts": [
     {

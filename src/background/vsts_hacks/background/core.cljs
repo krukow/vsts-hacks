@@ -47,6 +47,7 @@
 
 (defn load-recent-work-items! []
   (go
+    (log "Loading recent items")
     (let [recent (<! (api/get-recently-changed "Mobile-Center"
                                                {:limit 10
                                                 :changed-by (:user @state)
@@ -121,7 +122,8 @@
 
 (defn boot-chrome-event-loop! []
   (let [chrome-event-channel (make-chrome-event-channel (chan))]
-    (runtime/tap-all-events chrome-event-channel)
+    (log "Booting loop")
+    (runtime/tap-on-connect-events chrome-event-channel)
     (run-chrome-event-loop! chrome-event-channel)))
 
 (defn boot-chrome-web-loop! []
@@ -139,6 +141,7 @@
     (run-chrome-web-loop! chrome-event-channel complete-channel)))
 
 (defn init! []
+  (log "initializing")
   (go
     (if-let [st (<! (storage/get-state))]
       (reset! state st))
