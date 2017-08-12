@@ -1,0 +1,46 @@
+div {
+    position: relative;
+    display: block;
+}
+ul {
+    list-style: none;
+    width: max-content;
+}
+
+li {
+    margin-bottom: 5px;
+}
+li > span {
+    margin-left: 5px;
+}
+a {
+    text-decoration: none;
+}
+
+div.wit {
+   width: 15px;
+   height: 15px;
+   float:left;
+}
+div.epic-wit {
+    background: rgb(255, 123, 0);
+}
+div.feature-wit {
+    background:rgb(119, 59, 147);
+}
+
+div.story-wit {
+    background:rgb(0, 156, 204);
+}
+
+div.task-wit {
+    background:rgb(242, 203, 29);
+}
+
+div.bug-wit {
+    background:rgb(204, 41, 61);
+}
+
+div.other-wit {
+    background:black;
+}
