@@ -38,11 +38,26 @@
       "Not Assigned"
       first-name)))
 
+(defn alias
+  [vsts-identity]
+  (if-let [identity (re-seq #"<(.+)>" vsts-identity)]
+    (let [email (last (last identity))]
+      (first (clojure.string/split email "@")))
+    ""))
+
 (defn click-handler
   [e]
   (let [el (.-target e)]
     (when-not (or (.-shiftKey e) ( .-ctrlKey e) ( .-metaKey e))
       (.create (.-tabs js/chrome) (clj->js {:url (.-href el)})))))
+
+(defn class-for-wit-icon [wit]
+  (cond (= wit "Epic")        "epic-wit"
+        (= wit "Feature")     "feature-wit"
+        (= wit "User Story")  "story-wit"
+        (= wit "Task")        "task-wit"
+        (= wit "Bug")         "bug-wit"
+        :else ""))
 
 (defui RecentItems
   static om/IQuery
@@ -68,13 +83,19 @@
                 (fn [item]
                   (dom/li
                    nil
+                   (dom/div (clj->js {:className (str "wit "
+                                                      (class-for-wit-icon
+                                                       (get-in item [:fields :System.WorkItemType])))}))
                    (dom/span
                     nil
                     (dom/a (clj->js {:href (work-item-link item)
                                      :onClick click-handler})
                            (get-in item [:fields :System.Title]))
-                    (str " [" (get-in item [:fields :System.WorkItemType]) "]")
-                    (str " [" (first-name (get-in item [:fields :System.AssignedTo])) "]"))))
+                    (str " ["
+                     (first-name (get-in item [:fields :System.AssignedTo]))
+                     ", "
+                     (alias (get-in item [:fields :System.AssignedTo]))
+                     "]"))))
                 (:value recent-items))))))))
 
 (defui RecentViewedItems
@@ -94,14 +115,20 @@
             (fn [item]
               (dom/li
                nil
+               (dom/div (clj->js {:className (str "wit "
+                                                      (class-for-wit-icon
+                                                       (get-in item [:fields :System.WorkItemType])))}))
                (dom/span
                 nil
                 (dom/a (clj->js {:href (work-item-link item)
                                  :onClick click-handler})
                        (get-in item [:fields :System.Title]))
-                (str " [" (get-in item [:fields :System.WorkItemType]) "]")
-                (str " [" (first-name (get-in item [:fields :System.AssignedTo])) "]"
-                    ))))
+                (str " ["
+                     (first-name (get-in item [:fields :System.AssignedTo]))
+                     ", "
+                     (alias (get-in item [:fields :System.AssignedTo]))
+                     "]")
+                )))
             (:value recent-viewed-items)))))))
 
 (def recent-edited-items (om/factory RecentItems))
@@ -145,7 +172,17 @@
 
 ; -- main entry point -------------------------------------------------------------------------------------------------------
 
+(defn link-to-style! []
+
+  (let [link (gdom/createDom "link"
+                             (clj->js
+                              {:rel "stylesheet" :type "text/css" :href "css/popup.css"}))
+
+        head (aget (.getElementsByTagName (gdom/getDocument) "head") 0)]
+    (.appendChild head link)))
+
 (defn init! []
+  (link-to-style!)
   (connect-to-background-page!)
   (om/add-root! reconciler
                 RecentItems (gdom/getElement "container"))
