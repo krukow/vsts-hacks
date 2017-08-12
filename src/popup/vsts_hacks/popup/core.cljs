@@ -156,11 +156,7 @@
 
 
 (defn process-message! [message]
-  (let [state (js->clj message :keywordize-keys true)
-
-
-        ]
-    (log state)
+  (let [state (js->clj message :keywordize-keys true)]
     (reset! local-state state)))
 
 (defn run-message-loop! [message-channel]
