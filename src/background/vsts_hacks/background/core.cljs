@@ -47,6 +47,7 @@
 
 (defn load-recent-work-items! []
   (go
+    (log "Loading recent items")
     (let [recent (<! (api/get-recently-changed "Mobile-Center"
                                                {:limit 10
                                                 :changed-by (:user @state)
@@ -58,10 +59,11 @@
 
 (defn load-recent-viewed-work-items! []
   (go
-    (let [recent (<! (api/get-work-items (map :id (:recent-viewed-item-ids @state))))]
-      (swap! state assoc :recent-viewed-items recent)
-      (doseq [client @clients]
-        (post-message! client (clj->js @state))))))
+    (when-let [recent-items (:recent-viewed-item-ids @state)]
+      (let [recent (<! (api/get-work-items (map :id recent-items)))]
+        (swap! state assoc :recent-viewed-items recent)
+        (doseq [client @clients]
+          (post-message! client (clj->js @state)))))))
 
 (defn add-user-watcher! []
   (add-watch
@@ -120,7 +122,8 @@
 
 (defn boot-chrome-event-loop! []
   (let [chrome-event-channel (make-chrome-event-channel (chan))]
-    (runtime/tap-all-events chrome-event-channel)
+    (log "Booting loop")
+    (runtime/tap-on-connect-events chrome-event-channel)
     (run-chrome-event-loop! chrome-event-channel)))
 
 (defn boot-chrome-web-loop! []
@@ -138,6 +141,7 @@
     (run-chrome-web-loop! chrome-event-channel complete-channel)))
 
 (defn init! []
+  (log "initializing")
   (go
     (if-let [st (<! (storage/get-state))]
       (reset! state st))

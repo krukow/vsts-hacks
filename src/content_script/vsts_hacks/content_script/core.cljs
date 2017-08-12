@@ -55,7 +55,7 @@
 
         parser (fn [el]
                  (if-let [text (.-innerHTML el)]
-                   (let [id (.parseInt js/window text 10)]
+                   (let [id (js/parseInt text 10)]
                      (if (js/isNaN id) nil id))))]
 
     (go-loop [elements (<! (wait-for-work-item-pop-up!))]
